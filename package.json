@@ -1,0 +1,25 @@
+{
+  "name": "stocks-portfolio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anjalig21/Stocks-Portfolio.git"
+  },
+  "author": "Anjali Gupta",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anjalig21/Stocks-Portfolio/issues"
+  },
+  "homepage": "https://github.com/anjalig21/Stocks-Portfolio#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7",
+    "unirest": "^0.6.0"
+  }
+}
