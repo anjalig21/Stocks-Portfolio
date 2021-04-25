@@ -18,8 +18,14 @@
   "homepage": "https://github.com/anjalig21/Stocks-Portfolio#readme",
   "dependencies": {
     "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "nodemon": "^2.0.7",
+    "pg": "^8.5.1",
+    "sql": "^0.78.0",
     "unirest": "^0.6.0"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0"
   }
 }
