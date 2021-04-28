@@ -41,98 +41,156 @@ async function getPrice(ticker) {
 }
 
 // Gets price of stock ticker from Finnhub API
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
     if (!req.query.ticker) {
         res.send("Welcome")
     }
-    async function sendResponse() {
-        const result = await getPrice(req.query.ticker);
-        if (result.data.c === 0) {
-            res.status(400).send('Ticker does not exist');
-        } else {
-            const sendData = {
-                "ticker": req.query.ticker,
-                "price": result.data.c
-            }
-            res.status(200).send(sendData);
+    const result = await getPrice(req.query.ticker);
+    if (result.data.c === 0) {
+        res.status(400).send('Ticker does not exist');
+    } else {
+        const sendData = {
+            "ticker": req.query.ticker,
+            "price": result.data.c
         }
+        res.status(200).send(sendData);
     }
-    sendResponse();
+})
+
+// Gets the stock tickers in user's portfolio and returns price of each ticker by using the Finhub API
+app.get("/portfolio/:account", async (req, res) => {
+    try {
+        const client = await pool.connect();
+        const priceArray = [];
+        await client.query(
+            `SELECT * FROM ${req.params.account}`,
+            async (error, response) => {
+                if (error) {
+                    res.status('400').send('User does not exist');
+                    throw error;
+                }
+                let length = response.rowCount;
+                for (let i = 0; i < length; i++) {
+                    let ticker = response.rows[i].tickers;
+                    // if (!ticker) {
+                    //      break;
+                    //  }
+                    const result = await getPrice(ticker);
+                    if (result.data.c === 0) {
+                        res.status(400).send('Ticker does not exist');
+                    }
+                    priceArray.push({ "ticker": ticker, "price": result.data.c });
+                }
+                res.send(priceArray);
+            }
+        )
+    }
+    catch (err) {
+        console.log(err);
+    }
 })
 
 // Clears database
-app.delete("/", (req, res) => {
-    async function deleteDb() {
-        try {
-            const client = await pool.connect();
-            await client.query(
-                "SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';",
-                async (err, table) => {
-                    // console.log(table.rows);
-                    if (err) throw err;
-                    let length = table.rowCount;
-                    for (let i = 0; i < length; i++) {
+app.delete("/", async (req, res) => {
+    try {
+        const client = await pool.connect();
+        await client.query(
+            "SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';",
+            async (err, table) => {
+                // console.log(table.rows);
+                if (err) throw err;
+                let length = table.rowCount;
+                for (let i = 0; i < length; i++) {
+                    await client.query(
+                        `DROP TABLE ${table.rows[i].table_name};`,
+                        (err, response) => {
+                            if (err) throw err;
+                        }
+                    )
+                }
+                console.log("Table Deleted");
+            })
+    }
+    catch (err) {
+        console.log(err);
+    }
+})
+
+app.delete("/portfolio/:account", async (req, res) => {
+    try {
+        const client = await pool.connect();
+        await client.query(
+            `SELECT * from ${req.params.account}`,
+            async (err, table) => {
+                // console.log(table.rows);
+                if (err) {
+                    res.status(400).send(`Account does not exist`);
+                    throw err;
+                }
+                let length = table.rowCount;
+                for (let i = 0; i < length; i++) {
+                    const found = req.body.tickers.find(t => t === table.rows[i].tickers);
+                    if (found) {
                         await client.query(
-                            `DROP TABLE ${table.rows[i].table_name};`,
+                            `DELETE FROM ${req.params.account} WHERE tickers='${table.rows[i].tickers}' RETURNING *;`,
                             (err, response) => {
-                                if (err) throw err;
+                                if (err) {
+                                    res.status(400).send(`Could not delete ${table.rows[i].tickers}`);
+                                    throw err;
+                                }
+                                console.log(response);
                             }
                         )
                     }
-                    console.log("Table Deleted");
-                })
-        }
-        catch (err) {
-            console.log(err);
-        }
+                }
+                res.status(200).send("Tickers Deleted");
+            })
     }
-    deleteDb();
-})
-
-app.delete("/portfolio/:account", (req, res) => {
-    async function deleteTicker() {
-        try {
-            const client = await pool.connect();
-            await client.query(
-                `IF EXISTS (SELECT * from ${account})`,
-                async (err, table) => {
-                    // console.log(table.rows);
-                    if (err) throw err;
-                    let length = table.rowCount;
-                    for (let i = 0; i < length; i++) {
-                        const found = req.body.find((t, idx) => t.tickers === table.rows[i].tickers);
-                        if (found) {
-                            await client.query(
-                                `DELETE FROM ${account} WHERE tickers=${table.rows[i].tickers};`,
-                                (err, response) => {
-                                    if (err) throw err;
-                                }
-                            )
-                        }
-                    }
-                    console.log("Tickers Deleted");
-                })
-        }
-        catch (err) {
-            console.log(err);
-        }
+    catch (err) {
+        console.log(err);
     }
-    deleteTicker();
 })
 
 // Creates and Updates User's Portfolio (adds more ticker stocks)
-app.post("/portfolio/:account", (req, res) => {
-    async function sendResponse() {
-        var result;
-        try {
-            const client = await pool.connect();
+app.post("/portfolio/:account", async (req, res) => {
+    let result;
+    let notAdded = [];
+    try {
+        const client = await pool.connect();
+        await client.query(
+            `CREATE TABLE IF NOT EXISTS ${req.params.account} (id serial PRIMARY KEY, tickers VARCHAR(200));`,
+            (err, res) => {
+                if (err) throw err;
+                console.log(res);
+            })
+        if (req.body.tickers) {
             await client.query(
-                `CREATE TABLE IF NOT EXISTS ${req.params.account} (id serial PRIMARY KEY, tickers VARCHAR(200));`,
-                (err, res) => {
-                    if (err) throw err;
-                    console.log(res);
+                `SELECT * FROM ${req.params.account}`
+            )
+                .then((data) => {
+                    result = data;
                 })
-            if (req.body.tickers) {
+                .catch((err) => {
+                    res.sendStatus('400').end();
+                })
+
+            if (result.rows.length === 0) {
+                let counter = 0;
+                for (counter; counter < req.body.tickers.length; counter++) {
+                    const resultingPrice = await getPrice(req.body.tickers[counter]);
+                    if (resultingPrice.data.c === 0) {
+                        res.status(400).send(`Ticker ${req.body.tickers[counter]} does not exist`);
+                    } else {
+                        break;
+                    }
+                }
+                await client.query(
+                    `INSERT INTO ${req.params.account} (id, tickers) VALUES (DEFAULT, '${req.body.tickers[counter]}');`,
+                    (err, res) => {
+                        if (err) throw err;
+                        console.log("Ticker Inserted");
+                    })
+
                 await client.query(
                     `SELECT * FROM ${req.params.account}`
                 )
@@ -142,80 +200,34 @@ app.post("/portfolio/:account", (req, res) => {
                     .catch((err) => {
                         res.sendStatus('400').end();
                     })
-
-                if (result.rows.length === 0) {
+            }
+            for (let i = 0; i < req.body.tickers.length; i++) {
+                const found = result.rows.find(t => t.tickers === req.body.tickers[i]);
+                const resultPrice = await getPrice(req.body.tickers[i]);
+                if (resultPrice.data.c === 0) {
+                    notAdded.push(`"${req.body.tickers[i]}"`);
+                }
+                if (!found && resultPrice.data.c != 0) {
                     await client.query(
-                        `INSERT INTO ${req.params.account} (id, tickers) VALUES (DEFAULT, '${req.body.tickers[0]}');`,
+                        `INSERT INTO ${req.params.account} (id, tickers) VALUES (DEFAULT, '${req.body.tickers[i]}');`,
                         (err, res) => {
                             if (err) throw err;
                             console.log("Ticker Inserted");
                         })
-                    await client.query(
-                        `SELECT * FROM ${req.params.account}`
-                    )
-                        .then((data) => {
-                            result = data;
-                        })
-                        .catch((err) => {
-                            res.sendStatus('400').end();
-                        })
-                }
-                for (let i = 0; i < req.body.tickers.length; i++) {
-                    const found = result.rows.find(t => t.tickers === req.body.tickers[i]);
-                    if (!found) {
-                        await client.query(
-                            `INSERT INTO ${req.params.account} (id, tickers) VALUES (DEFAULT, '${req.body.tickers[i]}');`,
-                            (err, res) => {
-                                if (err) throw err;
-                                console.log("Ticker Inserted");
-                            })
-                    }
                 }
             }
-            res.status('200').send(`${req.params.account}'s Portfolio Updated`);
-        }
-        catch (err) {
-            console.log(err);
-        }
-    }
-    sendResponse();
-})
-
-// Gets the stock tickers in user's portfolio and returns price of each ticker by using the Finhub API
-app.get("/portfolio/:account", (req, res) => {
-    async function getPrice() {
-        try {
-            const client = await pool.connect();
-            const priceArray = [];
-            await client.query(
-                `SELECT EXISTS(SELECT * FROM ${req.params.account})`,
-                async (error, response) => {
-                    if (error) {
-                        res.status('400').send('User does not exist');
-                        throw error;
-                    }
-                    let length = response.rowCount;
-                    for (let i = 0; i < length; i++) {
-                        let ticker = response.rows[i].tickers;
-                        const result = await getPrice(ticker);
-                        if (result.data.c === 0) {
-                            res.status(400).send('Ticker does not exist');
-                        }
-                        priceArray.push({ "ticker": ticker, "price": result.data.c });
-                    }
-                    res.send(priceArray);
-                }
-            )
-        }
-        catch (err) {
-            console.log(err);
+            if (notAdded.length > 0) {
+                res.status(400).send(`Could not add these tickers: ${notAdded}`);
+            } else {
+                res.status(200).send(`${req.params.account}'s Portfolio Updated`);
+            }
         }
     }
-    getPrice();
+    catch (err) {
+        console.log(err);
+    }
 })
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
-
-
