@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import HomeStyles from './HomeStyles'
 import { Typography, Card, CardActionArea, CardActions, CardContent, CardMedia, Button }  from '@material-ui/core';
+import stockPrices from './stockPrices.png'
 const axios = require('axios');
 
 const GetTicker = () => {
@@ -24,7 +25,7 @@ const GetTicker = () => {
     return (
         <div id="home" style={{ height: "100vh" }}>
             <div className={classes.homeTitle}>
-                <Typography variant="h3">Organize Your Stocks Portfolio With Us!</Typography>
+                <Typography variant="h2">Stocks Portfolio</Typography>
                 <form>
                     <label>
                         Ticker:
@@ -40,16 +41,16 @@ const GetTicker = () => {
                 <CardActionArea>
                     <CardMedia
                         className={classes.media}
-                        image="/static/images/cards/contemplative-reptile.jpg"
-                        title="Contemplative Reptile"
+                        image= { stockPrices }
+                        title="Stocks"
                     />
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="h2">
-                            Lizard
+                            Organize Your Stocks Portfolio With Us!
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
-                            Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-                            across all continents except Antarctica
+                            Track your investments with the FinnHub API! 
+                            Make your portfolio now below!
                         </Typography>
                     </CardContent>
                 </CardActionArea>
