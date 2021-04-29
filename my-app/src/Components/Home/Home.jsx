@@ -50,7 +50,7 @@ const GetTicker = () => {
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
                             Track your investments with the FinnHub API! 
-                            Make your portfolio now below!
+                            Make your portfolio now!
                         </Typography>
                     </CardContent>
                 </CardActionArea>
