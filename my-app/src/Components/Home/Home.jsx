@@ -19,7 +19,7 @@ const Home = () => {
                 history.push("/Main");
             })
             .catch((err) => {
-                history.push("/");
+                history.push("/createAccount");
             })
         return result;
     }

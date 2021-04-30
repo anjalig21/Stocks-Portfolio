@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import MainStyles from './MainStyles';
+import {name} from '../Home/Home'
 import { Typography, Card, CardActionArea, CardActions, CardContent, CardMedia, Button, Grid } from '@material-ui/core';
 import { Redirect, useHistory } from 'react-router-dom';
 import add from './add.jpeg';
