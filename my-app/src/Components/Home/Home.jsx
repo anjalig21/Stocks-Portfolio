@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 import HomeStyles from './HomeStyles';
 import { Typography, Card, CardActionArea, CardActions, CardContent, CardMedia, Button } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import stockPrices from './stockPrices.png';
 const axios = require('axios');
 
 const Home = () => {
     // classes and queries
+    const history = useHistory();
     const classes = HomeStyles();
     const [name, setName] = useState();
+    const [login, setLogin] = useState(false);
 
     async function getName(e) {
-        if (e) {
-            e.preventDefault();
-        }
+        e.preventDefault();
         const result = await axios.get(`http://localhost:5000/portfolio/${name}`)
             .then((res) => {
-                return true;
+                history.push("/Main");
             })
             .catch((err) => {
-                return false;
+                history.push("/");
             })
         return result;
     }
@@ -52,9 +52,7 @@ const Home = () => {
                             Name:
                     <input onChange={(e) => setName(e.target.value)} type="text" name="ticker" />
                         </label>
-                        <Link onClick={e => getName(e) ? e.preventDefault() : null} to="/Main" >
-                            <Button type="button">Submit</Button>
-                        </Link>
+                        <Button onClick={e => getName(e)} type="submit">Submit</Button>
                     </form>
                 </CardActions>
             </Card>
