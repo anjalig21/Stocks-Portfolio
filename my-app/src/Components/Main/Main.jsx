@@ -9,12 +9,15 @@ const axios = require('axios');
 
 const Main = () => {
     const classes = MainStyles();
+
     return (
         <Grid container id="main">
+            {/* Title */}
             <Grid item xs={12} className={classes.mainTitle}>
                 <Typography variant="h2">Stocks Portfolio</Typography>
             </Grid>
             <Grid item container xs={12}>
+                {/* Card #1 */}
                 <Grid item xs={4} className={classes.mainCard}>
                     <br />
                     <br />
@@ -42,6 +45,7 @@ const Main = () => {
                         </CardActions>
                     </Card>
                 </Grid>
+                {/* Card #2 */}
                 <Grid item xs={4} className={classes.mainCard}>
                     <br />
                     <br />
@@ -73,6 +77,7 @@ const Main = () => {
                         </CardActions>
                     </Card>
                 </Grid>
+                {/* Card #3 */}
                 <Grid item xs={4} className={classes.mainCard}>
                     <br />
                     <br />
@@ -104,6 +109,7 @@ const Main = () => {
                         </CardActions>
                     </Card>
                 </Grid>
+                {/* Home Page Buttonl */}
                 <Grid item xs={12}>
                     <br />
                     <br />
