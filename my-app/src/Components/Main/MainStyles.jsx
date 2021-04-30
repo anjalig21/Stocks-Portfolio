@@ -11,6 +11,9 @@ const MainStyles = makeStyles((theme) => ({
         justifyContent: "center",
         textAlign: "center",
         color: theme.palette.secondary.dark
+    },
+    mainCard: {
+        paddingLeft: "2.2%"
     }
 }))
 

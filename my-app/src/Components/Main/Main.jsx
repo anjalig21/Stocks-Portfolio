@@ -15,7 +15,7 @@ const Main = () => {
                 <Typography variant="h2">Stocks Portfolio</Typography>
             </Grid>
             <Grid item container xs={12}>
-                <Grid item xs={4}>
+                <Grid item xs={4} className={classes.mainCard}>
                     <br />
                     <br />
                     <Card className={classes.root}>
@@ -46,7 +46,7 @@ const Main = () => {
                         </CardActions>
                     </Card>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={4} className={classes.mainCard}>
                     <br />
                     <br />
                     <Card className={classes.root}>
@@ -77,7 +77,7 @@ const Main = () => {
                         </CardActions>
                     </Card>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={4} className={classes.mainCard}>
                     <br />
                     <br />
                     <Card className={classes.root}>
