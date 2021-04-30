@@ -3,7 +3,9 @@ import { makeStyles } from '@material-ui/styles';
 
 const HomeStyles = makeStyles((theme) => ({
     root: {
-        maxWidth: 345,
+        maxWidth: 350,
+        justifyContent: "center",
+        align: "center"
     },
     media: {
         height: 140,
