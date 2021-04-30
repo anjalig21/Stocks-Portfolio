@@ -11,6 +11,10 @@ const MakeAccountStyles = makeStyles((theme) => ({
         justifyContent: "center",
         textAlign: "center",
         color: theme.palette.secondary.dark
+    },
+    makeAccountCard: {
+        display: 'flex', 
+        justifyContent: 'center'
     }
 }))
 

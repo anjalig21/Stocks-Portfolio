@@ -14,6 +14,10 @@ const HomeStyles = makeStyles((theme) => ({
         justifyContent: "center",
         textAlign: "center",
         color: theme.palette.secondary.dark
+    },
+    homeCard: {
+        display: 'flex', 
+        justifyContent: 'center'
     }
 }))
 
