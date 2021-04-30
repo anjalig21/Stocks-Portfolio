@@ -14,6 +14,10 @@ const MainStyles = makeStyles((theme) => ({
     },
     mainCard: {
         paddingLeft: "2.2%"
+    },
+    mainButton: {
+        margin: '0 auto', 
+        display: "flex"
     }
 }))
 

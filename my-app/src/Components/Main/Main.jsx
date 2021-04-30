@@ -27,7 +27,7 @@ const Main = () => {
                             />
                             <CardContent>
                                 <Typography gutterBottom variant="h5" component="h2">
-                                    Look at Your Current Portfolio
+                                    Your Current Portfolio
                         </Typography>
                                 <Typography variant="body2" color="textSecondary" component="p">
                                     Want to see your portfolio? 
@@ -37,11 +37,7 @@ const Main = () => {
                         </CardActionArea>
                         <CardActions>
                             <form>
-                                <label>
-                                    Name:
-                                    <input type="text" name="ticker" />
-                                </label>
-                                <Button type="submit">Submit</Button>
+                                <Button type="submit">Click Here to See Your Portfolio</Button>
                             </form>
                         </CardActions>
                     </Card>
@@ -58,7 +54,7 @@ const Main = () => {
                             />
                             <CardContent>
                                 <Typography gutterBottom variant="h5" component="h2">
-                                    Add a Stock to Your Portfolio
+                                    Add a Stock
                         </Typography>
                                 <Typography variant="body2" color="textSecondary" component="p">
                                     Type in the stock you want to add to your portfolio below! 
@@ -69,7 +65,7 @@ const Main = () => {
                         <CardActions>
                             <form>
                                 <label>
-                                    Name:
+                                    Stock Symbol:
                                     <input type="text" name="ticker" />
                                 </label>
                                 <Button type="submit">Submit</Button>
@@ -100,14 +96,18 @@ const Main = () => {
                         <CardActions>
                             <form>
                                 <label>
-                                    Name:
+                                    Stock Symbol:
                                     <input type="text" name="ticker" />
                                 </label>
                                 <Button type="submit">Submit</Button>
                             </form>
                         </CardActions>
                     </Card>
-
+                </Grid>
+                <Grid item xs={12}>
+                    <br />
+                    <br />
+                    <Button type="submit" className={classes.mainButton}>Back to Home Page</Button>
                 </Grid>
             </Grid>
         </Grid>
