@@ -3,8 +3,6 @@ import { makeStyles } from '@material-ui/styles';
 const MakeAccountStyles = makeStyles((theme) => ({
     root: {
         maxWidth: 350,
-        justifyContent: "center",
-        align: "center"
     },
     media: {
         height: 140,
