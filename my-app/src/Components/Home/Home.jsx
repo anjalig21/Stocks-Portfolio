@@ -3,7 +3,6 @@ import useHome from './useHome';
 import HomeStyles from './HomeStyles';
 import { Typography, Card, CardActionArea, CardActions, CardContent, CardMedia, Button } from '@material-ui/core';
 import stockPrices from './stockPrices.png';
-const axios = require('axios');
 
 const Home = () => {
     const classes = HomeStyles();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainStyles from './MainStyles';
 import useHome from '../Home/useHome';
 import { Typography, Card, CardActionArea, CardActions, CardContent, CardMedia, Button, Grid } from '@material-ui/core';
@@ -9,6 +9,12 @@ const axios = require('axios');
 
 const Main = () => {
     const classes = MainStyles();
+    const [portfolio, setPortfolio] = useState([{}]);
+    const [ticker, setTicker] = useState();
+    useEffect(() => {
+        getPortfolio();
+    }, [])
+
     const {
         history,
         name,
@@ -16,15 +22,47 @@ const Main = () => {
         setName
     } = useHome();
 
-    async function getPortfolio(e) {
-        e.preventDefault();
-        const result = await axios.get(`http://localhost:5000/portfolio/${name}`)
+    async function getPortfolio(e=null) {
+        if (e) {
+            e.preventDefault();
+        }
+        const result = await axios.get(`http://localhost:5000/portfolio/${localStorage.getItem("name")}`)
             .then((res) => {
-                // show portfolio
+                setPortfolio(res.data);
+                console.log(portfolio);
             })
             .catch((err) => {
-                // return error
+                console.log(err);
             })
+        return result;
+    }
+
+    async function delPortfolio(e=null, ticker) {
+        if (e) {
+            e.preventDefault();
+        }
+        const result = await axios.delete(`http://localhost:5000/portfolio/${localStorage.getItem("name")}`, {data: {"tickers": [ticker]}})
+            .then((res) => {
+                getPortfolio();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        return result;
+    }
+
+    async function addPortfolio(e=null, ticker) {
+        if (e) {
+            e.preventDefault();
+        }
+        const result = await axios.post(`http://localhost:5000/portfolio/${localStorage.getItem("name")}`, {"tickers": [ticker]})
+            .then((res) => {
+                getPortfolio();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            getPortfolio();
         return result;
     }
 
@@ -37,7 +75,15 @@ const Main = () => {
             <Grid item container xs={12}>
                 <Grid item xs={8} className={classes.mainCard}>
                     <Typography variant="h3">Your Portfolio</Typography>
-
+                    <br />
+                    {portfolio.map((event) => {
+                        return (
+                            <div>
+                                <Typography display="inline" variant="h4" key={event.ticker}>{event.ticker}: ${event.price}</Typography>
+                                <Button onClick={e => delPortfolio(e, event.ticker)}>Delete</Button>
+                            </div>
+                        );
+                    })}
                 </Grid>
                 <Grid item xs={4} className={classes.mainCard}>
                     <br />
@@ -63,9 +109,9 @@ const Main = () => {
                             <form>
                                 <label>
                                     Stock Symbol:
-                                    <input type="text" name="ticker" />
+                                    <input onChange={(e) => setTicker(e.target.value)} type="text" name="ticker" />
                                 </label>
-                                <Button type="submit">Submit</Button>
+                                <Button onClick={e => addPortfolio(e, ticker)} type="submit">Submit</Button>
                             </form>
                         </CardActions>
                     </Card>

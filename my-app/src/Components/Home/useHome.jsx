@@ -11,6 +11,7 @@ function useHome() {
         e.preventDefault();
         const result = await axios.get(`http://localhost:5000/portfolio/${name}`)
             .then((res) => {
+                localStorage.setItem("name", name);
                 history.push("/Main");
             })
             .catch((err) => {
