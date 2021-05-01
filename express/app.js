@@ -221,6 +221,8 @@ app.post("/portfolio/:account", async (req, res) => {
             } else {
                 res.status(200).send(`${req.params.account}'s Portfolio Updated`);
             }
+        } else {
+            res.status(200).send(`${req.params.account}'s Portfolio Made`);
         }
     }
     catch (err) {
