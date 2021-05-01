@@ -38,7 +38,7 @@ const Home = () => {
                         <form>
                             <label>
                                 Name:
-                    <input onChange={(e) => setName(e.target.value)} type="text" name="ticker" />
+                            <input onChange={(e) => setName(e.target.value)} type="text" name="ticker" />
                             </label>
                             <Button onClick={e => getName(e)} type="submit">Submit</Button>
                         </form>

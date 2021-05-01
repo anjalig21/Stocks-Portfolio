@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import MainStyles from './MainStyles';
-import { Typography, Card, CardActionArea, CardActions, CardContent, CardMedia, Button, Grid } from '@material-ui/core';
+import { Typography, Card, CardActionArea, CardActions, CardContent, CardMedia, Button, Grid, Link } from '@material-ui/core';
 import add from './add.jpeg';
-// import useHome from '../Home/useHome';
+import useHome from '../Home/useHome';
 const axios = require('axios');
 
 const Main = () => {
@@ -13,14 +13,11 @@ const Main = () => {
         getPortfolio();
     }, [])
 
-    // const {
-    //     history,
-    //     name,
-    //     getName,
-    //     setName
-    // } = useHome();
+    const {
+        history
+    } = useHome();
 
-    async function getPortfolio(e=null) {
+    async function getPortfolio(e = null) {
         if (e) {
             e.preventDefault();
         }
@@ -35,11 +32,11 @@ const Main = () => {
         return result;
     }
 
-    async function delPortfolio(e=null, ticker) {
+    async function delPortfolio(e = null, ticker) {
         if (e) {
             e.preventDefault();
         }
-        const result = await axios.delete(`http://localhost:5000/portfolio/${localStorage.getItem("name")}`, {data: {"tickers": [ticker]}})
+        const result = await axios.delete(`http://localhost:5000/portfolio/${localStorage.getItem("name")}`, { data: { "tickers": [ticker] } })
             .then((res) => {
                 getPortfolio();
             })
@@ -49,11 +46,11 @@ const Main = () => {
         return result;
     }
 
-    async function addPortfolio(e=null, ticker) {
+    async function addPortfolio(e = null, ticker) {
         if (e) {
             e.preventDefault();
         }
-        const result = await axios.post(`http://localhost:5000/portfolio/${localStorage.getItem("name")}`, {"tickers": [ticker]})
+        const result = await axios.post(`http://localhost:5000/portfolio/${localStorage.getItem("name")}`, { "tickers": [ticker] })
             .then((res) => {
                 getPortfolio();
             })
@@ -70,19 +67,24 @@ const Main = () => {
                 <Typography variant="h2">Stocks Portfolio: {localStorage.getItem("name")}</Typography>
             </Grid>
             <Grid item container xs={12}>
-                <Grid item xs={8} className={classes.mainCard}>
-                    <Typography variant="h3">Your Portfolio</Typography>
+                <Grid item xs={6} className={classes.mainCard}>
+                    <br />
+                    <br />
+                    <br />
+                    <Typography className={classes.portTitle} variant="h3">Your Portfolio</Typography>
+                    <br />
                     <br />
                     {portfolio.map((event) => {
                         return (
                             <div>
-                                <Typography display="inline" variant="h4" key={event.ticker}>{event.ticker}: ${event.price}</Typography>
+                                <Typography className={classes.tickers} display="inline" variant="h4" key={event.ticker}>{event.ticker}: ${event.price}</Typography>
                                 <Button onClick={e => delPortfolio(e, event.ticker)}>Delete</Button>
                             </div>
                         );
                     })}
                 </Grid>
-                <Grid item xs={4} className={classes.mainCard}>
+                <Grid item xs={6} className={classes.mainCard}>
+                    <br />
                     <br />
                     <br />
                     <Card className={classes.root}>
@@ -112,12 +114,6 @@ const Main = () => {
                             </form>
                         </CardActions>
                     </Card>
-                </Grid>
-                {/* Home Page Buttonl */}
-                <Grid item xs={12}>
-                    <br />
-                    <br />
-                    <Button type="submit" className={classes.mainButton}>Back to Home Page</Button>
                 </Grid>
             </Grid>
         </Grid>

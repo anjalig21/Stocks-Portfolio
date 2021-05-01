@@ -12,8 +12,18 @@ const MainStyles = makeStyles((theme) => ({
         textAlign: "center",
         color: theme.palette.secondary.dark
     },
+    portTitle: {
+        justifyContent: "center",
+        textAlign: "center"
+    },
+    tickers: {
+        paddingLeft: "34%",
+        textAign: "center",
+        justifyContent: "center",
+        textAlign: "center"
+    },
     mainCard: {
-        paddingLeft: "2.2%"
+        paddingLeft: "10%"
     },
     mainButton: {
         margin: '0 auto', 
