@@ -1,28 +1,18 @@
 import React, { useState } from 'react';
+import useHome from './useHome';
 import HomeStyles from './HomeStyles';
 import { Typography, Card, CardActionArea, CardActions, CardContent, CardMedia, Button } from '@material-ui/core';
-import { Redirect, useHistory } from 'react-router-dom';
 import stockPrices from './stockPrices.png';
 const axios = require('axios');
 
 const Home = () => {
-    // classes and queries
-    const history = useHistory();
     const classes = HomeStyles();
-    const [name, setName] = useState();
-    const [login, setLogin] = useState(false);
-
-    async function getName(e) {
-        e.preventDefault();
-        const result = await axios.get(`http://localhost:5000/portfolio/${name}`)
-            .then((res) => {
-                history.push("/Main");
-            })
-            .catch((err) => {
-                history.push("/createAccount");
-            })
-        return result;
-    }
+    const {
+        history,
+        name,
+        getName,
+        setName
+    } = useHome();
 
     return (
         <div id="home" style={{ height: "100vh" }}>
