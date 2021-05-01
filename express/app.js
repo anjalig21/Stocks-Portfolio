@@ -86,7 +86,7 @@ app.get("/portfolio/:account", async (req, res) => {
         )
     }
     catch (err) {
-        console.log(err);
+        res.status(400).send(err);
     }
 })
 
@@ -112,7 +112,7 @@ app.delete("/", async (req, res) => {
             })
     }
     catch (err) {
-        console.log(err);
+        res.status(400).send(err);
     }
 })
 
@@ -147,7 +147,7 @@ app.delete("/portfolio/:account", async (req, res) => {
             })
     }
     catch (err) {
-        console.log(err);
+        res.status(400).send(err);
     }
 })
 
@@ -224,7 +224,7 @@ app.post("/portfolio/:account", async (req, res) => {
         }
     }
     catch (err) {
-        console.log(err);
+        res.status(400).send(err);
     }
 })
 

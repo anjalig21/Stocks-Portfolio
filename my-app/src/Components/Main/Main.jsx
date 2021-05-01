@@ -62,7 +62,6 @@ const Main = () => {
             .catch((err) => {
                 console.log(err);
             })
-            getPortfolio();
         return result;
     }
 
@@ -70,7 +69,7 @@ const Main = () => {
         <Grid container id="main">
             {/* Title */}
             <Grid item xs={12} className={classes.mainTitle}>
-                <Typography variant="h2">Stocks Portfolio</Typography>
+                <Typography variant="h2">Stocks Portfolio: {localStorage.getItem("name")}</Typography>
             </Grid>
             <Grid item container xs={12}>
                 <Grid item xs={8} className={classes.mainCard}>
