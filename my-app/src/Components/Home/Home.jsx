@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import useHome from './useHome';
 import HomeStyles from './HomeStyles';
 import { Typography, Card, CardActionArea, CardActions, CardContent, CardMedia, Button } from '@material-ui/core';
@@ -7,8 +7,6 @@ import stockPrices from './stockPrices.png';
 const Home = () => {
     const classes = HomeStyles();
     const {
-        history,
-        name,
         getName,
         setName
     } = useHome();

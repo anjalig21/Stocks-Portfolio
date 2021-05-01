@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import MainStyles from './MainStyles';
-import useHome from '../Home/useHome';
 import { Typography, Card, CardActionArea, CardActions, CardContent, CardMedia, Button, Grid } from '@material-ui/core';
 import add from './add.jpeg';
-import deleteEntry from './deleteEntry.jpeg';
-import get from './get.jpeg';
+// import useHome from '../Home/useHome';
 const axios = require('axios');
 
 const Main = () => {
@@ -15,12 +13,12 @@ const Main = () => {
         getPortfolio();
     }, [])
 
-    const {
-        history,
-        name,
-        getName,
-        setName
-    } = useHome();
+    // const {
+    //     history,
+    //     name,
+    //     getName,
+    //     setName
+    // } = useHome();
 
     async function getPortfolio(e=null) {
         if (e) {
