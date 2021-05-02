@@ -22,10 +22,10 @@ const config = {
     ssl: {
         rejectUnauthorized: false,
     },
-    ssl: {
-        ca: fs.readFileSync('cc-ca.cer')
-            .toString()
-    }
+    // ssl: {
+    //     ca: fs.readFileSync('cc-ca.cer')
+    //         .toString()
+    // }
 };
 
 // Create a connection pool
@@ -43,17 +43,17 @@ async function getPrice(ticker) {
 // Gets price of stock ticker from Finnhub API
 app.get("/", async (req, res) => {
     if (!req.query.ticker) {
-        res.send("Welcome")
+        return res.send("Welcome").end();
     }
     const result = await getPrice(req.query.ticker);
     if (result.data.c === 0) {
-        res.status(400).send('Ticker does not exist');
+        return res.status(400).send('Ticker does not exist').end();
     } else {
         const sendData = {
             "ticker": req.query.ticker,
             "price": result.data.c
         }
-        res.status(200).send(sendData);
+        return res.status(200).send(sendData).end();
     }
 })
 
@@ -66,8 +66,8 @@ app.get("/portfolio/:account", async (req, res) => {
             `SELECT * FROM ${req.params.account}`,
             async (error, response) => {
                 if (error) {
-                    res.status('400').send('User does not exist');
-                    throw error;
+                    console.log(error);
+                    return res.status('400').send('User does not exist').end();
                 }
                 let length = response.rowCount;
                 for (let i = 0; i < length; i++) {
@@ -77,16 +77,17 @@ app.get("/portfolio/:account", async (req, res) => {
                     //  }
                     const result = await getPrice(ticker);
                     if (result.data.c === 0) {
-                        res.status(400).send('Ticker does not exist');
+                        return res.status(400).send('Ticker does not exist').end();
                     }
                     priceArray.push({ "ticker": ticker, "price": result.data.c });
                 }
-                res.send(priceArray);
+                return res.status(200).send(priceArray).end();
             }
         )
     }
     catch (err) {
-        res.status(400).send(err);
+        console.log(err);
+        return res.status(400).send(err).end();
     }
 })
 
@@ -98,13 +99,18 @@ app.delete("/", async (req, res) => {
             "SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';",
             async (err, table) => {
                 // console.log(table.rows);
-                if (err) throw err;
+                if (err) {
+                    console.log(err);
+                    return res.status(500).send(err).end();
+                }
                 let length = table.rowCount;
                 for (let i = 0; i < length; i++) {
                     await client.query(
                         `DROP TABLE ${table.rows[i].table_name};`,
                         (err, response) => {
-                            if (err) throw err;
+                            if (err) {
+                                return res.status(500).send(err).end();
+                            }
                         }
                     )
                 }
@@ -112,7 +118,8 @@ app.delete("/", async (req, res) => {
             })
     }
     catch (err) {
-        res.status(400).send(err);
+        console.log(err);
+        return res.status(400).send(err).end();
     }
 })
 
@@ -124,8 +131,8 @@ app.delete("/portfolio/:account", async (req, res) => {
             async (err, table) => {
                 // console.log(table.rows);
                 if (err) {
-                    res.status(400).send(`Account does not exist`);
-                    throw err;
+                    console.log(err);
+                    return res.status(400).send(`Account does not exist`).end();
                 }
                 let length = table.rowCount;
                 for (let i = 0; i < length; i++) {
@@ -135,19 +142,18 @@ app.delete("/portfolio/:account", async (req, res) => {
                             `DELETE FROM ${req.params.account} WHERE tickers='${table.rows[i].tickers}' RETURNING *;`,
                             (err, response) => {
                                 if (err) {
-                                    res.status(400).send(`Could not delete ${table.rows[i].tickers}`);
-                                    throw err;
+                                    return res.status(400).send(`Could not delete ${table.rows[i].tickers}`).end();
                                 }
-                                console.log(response);
                             }
                         )
                     }
                 }
-                res.status(200).send("Tickers Deleted");
+                return res.status(200).send("Tickers Deleted").end();
             })
     }
     catch (err) {
-        res.status(400).send(err);
+        console.log(err);
+        return res.status(400).send(err).end();
     }
 })
 
@@ -160,8 +166,10 @@ app.post("/portfolio/:account", async (req, res) => {
         await client.query(
             `CREATE TABLE IF NOT EXISTS ${req.params.account} (id serial PRIMARY KEY, tickers VARCHAR(200));`,
             (err, res) => {
-                if (err) throw err;
-                console.log(res);
+                if (err) {
+                    console.log(err);
+                    return res.status(500).send(err).end();
+                }
             })
         if (req.body.tickers) {
             await client.query(
@@ -171,6 +179,7 @@ app.post("/portfolio/:account", async (req, res) => {
                     result = data;
                 })
                 .catch((err) => {
+                    console.log(err);
                     res.sendStatus('400').end();
                 })
 
@@ -179,7 +188,7 @@ app.post("/portfolio/:account", async (req, res) => {
                 for (counter; counter < req.body.tickers.length; counter++) {
                     const resultingPrice = await getPrice(req.body.tickers[counter]);
                     if (resultingPrice.data.c === 0) {
-                        res.status(400).send(`Ticker ${req.body.tickers[counter]} does not exist`);
+                        return res.status(400).send(`Ticker ${req.body.tickers[counter]} does not exist`).end();
                     } else {
                         break;
                     }
@@ -187,7 +196,10 @@ app.post("/portfolio/:account", async (req, res) => {
                 await client.query(
                     `INSERT INTO ${req.params.account} (id, tickers) VALUES (DEFAULT, '${req.body.tickers[counter]}');`,
                     (err, res) => {
-                        if (err) throw err;
+                        if (err) {
+                            console.log(err);
+                            return res.status(500).send(err).end();
+                        }
                         console.log("Ticker Inserted");
                     })
 
@@ -198,7 +210,7 @@ app.post("/portfolio/:account", async (req, res) => {
                         result = data;
                     })
                     .catch((err) => {
-                        res.sendStatus('400').end();
+                        res.sendStatus('400').end().end();
                     })
             }
             for (let i = 0; i < req.body.tickers.length; i++) {
@@ -211,22 +223,25 @@ app.post("/portfolio/:account", async (req, res) => {
                     await client.query(
                         `INSERT INTO ${req.params.account} (id, tickers) VALUES (DEFAULT, '${req.body.tickers[i]}');`,
                         (err, res) => {
-                            if (err) throw err;
+                            if (err) {
+                                return res.status(500).send(err).end();
+                            }
                             console.log("Ticker Inserted");
                         })
                 }
             }
             if (notAdded.length > 0) {
-                res.status(400).send(`Could not add these tickers: ${notAdded}`);
+                return res.status(400).send(`Could not add these tickers: ${notAdded}`).end();
             } else {
-                res.status(200).send(`${req.params.account}'s Portfolio Updated`);
+                return res.status(200).send(`${req.params.account}'s Portfolio Updated`).end();
             }
         } else {
-            res.status(200).send(`${req.params.account}'s Portfolio Made`);
+            return res.status(200).send(`${req.params.account}'s Portfolio Made`).end();
         }
     }
     catch (err) {
-        res.status(400).send(err);
+        console.log(err);
+        return res.status(400).send(err).end();
     }
 })
 

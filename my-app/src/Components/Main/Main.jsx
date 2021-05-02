@@ -3,6 +3,7 @@ import MainStyles from './MainStyles';
 import { Typography, Card, CardActionArea, CardActions, CardContent, CardMedia, Button, Grid, Link } from '@material-ui/core';
 import add from './add.jpeg';
 import useHome from '../Home/useHome';
+require('dotenv').config();
 const axios = require('axios');
 
 const Main = () => {
@@ -21,7 +22,7 @@ const Main = () => {
         if (e) {
             e.preventDefault();
         }
-        const result = await axios.get(`http://localhost:5000/portfolio/${localStorage.getItem("name")}`)
+        const result = await axios.get(`${process.env.REACT_APP_PORT}/portfolio/${localStorage.getItem("name")}`)
             .then((res) => {
                 setPortfolio(res.data);
                 console.log(portfolio);
@@ -36,7 +37,7 @@ const Main = () => {
         if (e) {
             e.preventDefault();
         }
-        const result = await axios.delete(`http://localhost:5000/portfolio/${localStorage.getItem("name")}`, { data: { "tickers": [ticker] } })
+        const result = await axios.delete(`${process.env.REACT_APP_PORT}/portfolio/${localStorage.getItem("name")}`, { data: { "tickers": [ticker] } })
             .then((res) => {
                 getPortfolio();
             })
@@ -50,7 +51,7 @@ const Main = () => {
         if (e) {
             e.preventDefault();
         }
-        const result = await axios.post(`http://localhost:5000/portfolio/${localStorage.getItem("name")}`, { "tickers": [ticker] })
+        const result = await axios.post(`${process.env.REACT_APP_PORT}/portfolio/${localStorage.getItem("name")}`, { "tickers": [ticker] })
             .then((res) => {
                 getPortfolio();
             })

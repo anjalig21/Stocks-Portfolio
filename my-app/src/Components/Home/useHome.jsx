@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+require('dotenv').config();
 const axios = require('axios');
 
 function useHome() {
@@ -9,7 +10,7 @@ function useHome() {
 
     async function getName(e) {
         e.preventDefault();
-        const result = await axios.get(`http://localhost:5000/portfolio/${name}`)
+        const result = await axios.get(`${process.env.REACT_APP_PORT}/portfolio/${name}`)
             .then((res) => {
                 localStorage.setItem("name", name);
                 history.push("/Main");

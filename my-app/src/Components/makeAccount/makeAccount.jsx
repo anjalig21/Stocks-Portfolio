@@ -3,6 +3,7 @@ import MakeAccountStyles from './makeAccountStyles';
 import { Typography, Card, CardActionArea, CardActions, CardContent, CardMedia, Button } from '@material-ui/core';
 import portfolio from './portfolio.jpeg'
 import { useHistory } from 'react-router-dom';
+require('dotenv').config();
 const axios = require('axios');
 
 const MakeAccount = () => {
@@ -14,7 +15,7 @@ const MakeAccount = () => {
         if (e) {
             e.preventDefault();
         }
-        const result = await axios.post(`http://localhost:5000/portfolio/${account}`)
+        const result = await axios.post(`${process.env.REACT_APP_PORT}/portfolio/${account}`)
             .then((res) => {
                 localStorage.setItem("name", account);
                 history.push("/Main")
