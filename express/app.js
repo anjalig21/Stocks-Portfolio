@@ -67,6 +67,7 @@ app.get("/portfolio/:account", async (req, res) => {
             async (error, response) => {
                 if (error) {
                     console.log(error);
+                    client.release();
                     return res.status('400').send('User does not exist').end();
                 }
                 let length = response.rowCount;
@@ -77,16 +78,19 @@ app.get("/portfolio/:account", async (req, res) => {
                     //  }
                     const result = await getPrice(ticker);
                     if (result.data.c === 0) {
+                        client.release();
                         return res.status(400).send('Ticker does not exist').end();
                     }
                     priceArray.push({ "ticker": ticker, "price": result.data.c });
                 }
+                client.release();
                 return res.status(200).send(priceArray).end();
             }
         )
     }
     catch (err) {
         console.log(err);
+        client.release();
         return res.status(400).send(err).end();
     }
 })
@@ -101,6 +105,7 @@ app.delete("/", async (req, res) => {
                 // console.log(table.rows);
                 if (err) {
                     console.log(err);
+                    client.release();
                     return res.status(500).send(err).end();
                 }
                 let length = table.rowCount;
@@ -109,6 +114,7 @@ app.delete("/", async (req, res) => {
                         `DROP TABLE ${table.rows[i].table_name};`,
                         (err, response) => {
                             if (err) {
+                                client.release();
                                 return res.status(500).send(err).end();
                             }
                         }
@@ -119,6 +125,7 @@ app.delete("/", async (req, res) => {
     }
     catch (err) {
         console.log(err);
+        client.release();
         return res.status(400).send(err).end();
     }
 })
@@ -132,6 +139,7 @@ app.delete("/portfolio/:account", async (req, res) => {
                 // console.log(table.rows);
                 if (err) {
                     console.log(err);
+                    client.release();
                     return res.status(400).send(`Account does not exist`).end();
                 }
                 let length = table.rowCount;
@@ -142,17 +150,20 @@ app.delete("/portfolio/:account", async (req, res) => {
                             `DELETE FROM ${req.params.account} WHERE tickers='${table.rows[i].tickers}' RETURNING *;`,
                             (err, response) => {
                                 if (err) {
+                                    client.release();
                                     return res.status(400).send(`Could not delete ${table.rows[i].tickers}`).end();
                                 }
                             }
                         )
                     }
                 }
+                client.release();
                 return res.status(200).send("Tickers Deleted").end();
             })
     }
     catch (err) {
         console.log(err);
+        client.release();
         return res.status(400).send(err).end();
     }
 })
@@ -168,6 +179,7 @@ app.post("/portfolio/:account", async (req, res) => {
             (err, res) => {
                 if (err) {
                     console.log(err);
+                    client.release();
                     return res.status(500).send(err).end();
                 }
             })
@@ -180,6 +192,7 @@ app.post("/portfolio/:account", async (req, res) => {
                 })
                 .catch((err) => {
                     console.log(err);
+                    client.release();
                     res.sendStatus('400').end();
                 })
 
@@ -188,6 +201,7 @@ app.post("/portfolio/:account", async (req, res) => {
                 for (counter; counter < req.body.tickers.length; counter++) {
                     const resultingPrice = await getPrice(req.body.tickers[counter]);
                     if (resultingPrice.data.c === 0) {
+                        client.release();
                         return res.status(400).send(`Ticker ${req.body.tickers[counter]} does not exist`).end();
                     } else {
                         break;
@@ -198,6 +212,7 @@ app.post("/portfolio/:account", async (req, res) => {
                     (err, res) => {
                         if (err) {
                             console.log(err);
+                            client.release();
                             return res.status(500).send(err).end();
                         }
                         console.log("Ticker Inserted");
@@ -210,7 +225,8 @@ app.post("/portfolio/:account", async (req, res) => {
                         result = data;
                     })
                     .catch((err) => {
-                        res.sendStatus('400').end().end();
+                        client.release();
+                        return res.status('400').send(err).end();
                     })
             }
             for (let i = 0; i < req.body.tickers.length; i++) {
@@ -224,6 +240,7 @@ app.post("/portfolio/:account", async (req, res) => {
                         `INSERT INTO ${req.params.account} (id, tickers) VALUES (DEFAULT, '${req.body.tickers[i]}');`,
                         (err, res) => {
                             if (err) {
+                                client.release();
                                 return res.status(500).send(err).end();
                             }
                             console.log("Ticker Inserted");
@@ -231,16 +248,20 @@ app.post("/portfolio/:account", async (req, res) => {
                 }
             }
             if (notAdded.length > 0) {
+                client.release();
                 return res.status(400).send(`Could not add these tickers: ${notAdded}`).end();
             } else {
+                client.release();
                 return res.status(200).send(`${req.params.account}'s Portfolio Updated`).end();
             }
         } else {
+            client.release();
             return res.status(200).send(`${req.params.account}'s Portfolio Made`).end();
         }
     }
     catch (err) {
         console.log(err);
+        client.release();
         return res.status(400).send(err).end();
     }
 })
