@@ -5,13 +5,12 @@ This is a full-stack application to manage stock portfolios. Users can create th
 You can see this project here: 
 
 # Technologies Used
-- `PostgreSQL`
-- `Express`
+- `PostgreSQL ^8.5.1`
+- `Express ^4.17.1`
 - `React.js 4.0.1`
 - `Node.js 14.15.3`
 - `Material-UI 4.11.3`
-- `Axios`
+- `Axios ^0.21.1`
 - `HTML`
 - `CSS`
 - `JavaScript`
-
