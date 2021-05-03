@@ -1,3 +1,4 @@
 node_modules/
 cc-ca.cer
 .env
+package-lock.json
