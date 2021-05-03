@@ -106,12 +106,12 @@ const Main = () => {
                             </CardContent>
                         </CardActionArea>
                         <CardActions>
-                            <form>
+                            <form onSubmit={e => addPortfolio(e, ticker)}>
                                 <label>
                                     Stock Symbol:
                                     <input onChange={(e) => setTicker(e.target.value)} type="text" name="ticker" />
                                 </label>
-                                <Button onClick={e => addPortfolio(e, ticker)} type="submit">Submit</Button>
+                                <Button type="submit">Submit</Button>
                             </form>
                         </CardActions>
                     </Card>
