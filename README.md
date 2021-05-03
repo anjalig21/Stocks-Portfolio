@@ -14,3 +14,8 @@ You can see this project here: [Stocks-Portfolio](https://stocks-portfolio-cd830
 - `HTML`
 - `CSS`
 - `JavaScript`
+
+# Quick Demo
+<p align="center">
+  <img src="stocksportfolio.gif" alt="stocks portfolio" width="500" height="290"/>
+</p>
