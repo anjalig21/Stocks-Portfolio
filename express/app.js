@@ -53,7 +53,7 @@ app.get("/", async (req, res) => {
             "ticker": req.query.ticker,
             "price": result.data.c
         }
-        return res.status(200).send(sendData).end();
+        return res.status(200).send(sendData).end(); 
     }
 })
 
